@@ -1,0 +1,3 @@
+public_key_path: keys/public.pem
+private_key_path: keys/private.pem
+key_type: ecc
