@@ -20,12 +20,12 @@ func loadECCPrivateKey(privateKeyFile string) (*ecdsa.PrivateKey, error) {
 		return nil, logAndErrors.Wrapper(err, "failed to parse PEM block containing the private key")
 	}
 
-	privateKey, err := x509.ParseECPrivateKey(block.Bytes)
+	privateKey, err := x509.ParsePKCS8PrivateKey(block.Bytes)
 	if err != nil {
 		return nil, err
 	}
 
-	return privateKey, nil
+	return privateKey.(*ecdsa.PrivateKey), nil
 }
 
 func loadECCPublicKey(publicKeyFile string) (*ecdsa.PublicKey, error) {

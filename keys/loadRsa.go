@@ -1,53 +1,40 @@
 package keys
 
 import (
-	"chat/logAndErrors"
 	"chat/utils"
-	"crypto/ecdsa"
+	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
-	"fmt"
+	"log"
 )
 
-func loadRSAPrivateKey(privateKeyFile string) (*ecdsa.PrivateKey, error) {
+func loadRSAPrivateKey(privateKeyFile string) (*rsa.PrivateKey, error) {
 	keyBytes, err := utils.ReadFile(privateKeyFile)
 	if err != nil {
 		return nil, err
 	}
 
 	block, _ := pem.Decode(keyBytes)
-	if block == nil {
-		return nil, logAndErrors.Wrapper(err, "failed to parse PEM block containing the private key")
-	}
 
-	privateKey, err := x509.ParseECPrivateKey(block.Bytes)
+	privateKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
 	if err != nil {
-		return nil, err
+		log.Fatal(err)
 	}
 
 	return privateKey, nil
 }
 
-func loadRSAPublicKey(publicKeyFile string) (*ecdsa.PublicKey, error) {
+func loadRSAPublicKey(publicKeyFile string) (*rsa.PublicKey, error) {
 	keyBytes, err := utils.ReadFile(publicKeyFile)
 	if err != nil {
 		return nil, err
 	}
-
+	// Decode the PEM data
 	block, _ := pem.Decode(keyBytes)
-	if block == nil {
-		return nil, logAndErrors.Wrapper(err, "failed to parse PEM block containing the public key")
-	}
-
-	pub, err := x509.ParsePKIXPublicKey(block.Bytes)
+	// Parse the RSA public key
+	publicKey, err := x509.ParsePKCS1PublicKey(block.Bytes)
 	if err != nil {
-		return nil, err
+		log.Fatal(err)
 	}
-
-	publicKey, ok := pub.(*ecdsa.PublicKey)
-	if !ok {
-		return nil, fmt.Errorf("failed to parse public key")
-	}
-
 	return publicKey, nil
 }

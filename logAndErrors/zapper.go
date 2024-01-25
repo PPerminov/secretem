@@ -1,29 +1,26 @@
 package logAndErrors
 
 import (
-	"go.uber.org/zap"
+	log "github.com/sirupsen/logrus"
 )
 
-var logger *zap.Logger
-var sugar *zap.SugaredLogger
+var logger *log.Logger
 
-func Sync() {
-	logger.Sync()
-}
 func Init() {
-	logger, _ = zap.NewProduction()
-	sugar = logger.Sugar()
+	logger = log.New()
+
 }
 
 func Info(msg string) {
-	sugar.Infow(msg)
+	logger.Info(msg)
 }
 func Warn(msg string) {
-	sugar.Warn(msg)
+	logger.Warn(msg)
 }
 func Error(msg string) {
-	sugar.Error(msg)
+	logger.Error(msg)
 }
 func Fatal(msg string) {
-	sugar.Fatal(msg)
+	logger.Fatal(msg)
+	//logger.Fatal(logger.Trace())
 }
