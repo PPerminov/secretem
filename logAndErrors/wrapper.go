@@ -2,6 +2,6 @@ package logAndErrors
 
 import "fmt"
 
-func wrapper(err error, msg string) string {
-	return fmt.Sprintf("%s -> %s", msg, err.Error())
+func Wrapper(err error, msg string) error {
+	return fmt.Errorf("%s -> %s", msg, err.Error())
 }

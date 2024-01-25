@@ -4,7 +4,7 @@ func IfErrorThen(err error, message string, fn func()) {
 	if err == nil {
 		return
 	}
-	Error(wrapper(err, message))
+	Error(Wrapper(err, message).Error())
 	fn()
 }
 
@@ -12,5 +12,5 @@ func IfErrorThenFatal(err error, message string) {
 	if err == nil {
 		return
 	}
-	Fatal(wrapper(err, message))
+	Fatal(Wrapper(err, message).Error())
 }
