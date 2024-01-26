@@ -10,13 +10,13 @@ func LoadKeypair(config *config.Configuration) (*config.Configuration, error) {
 	if config.KeyType == "ecc" {
 		config.EccPrivateKey, err = loadECCPrivateKey(config.PrivateKeyPath)
 		logAndErrors.IfErrorThenFatal(err, "")
-		config.EccPublicKey, err = loadECCPublicKey(config.PrivateKeyPath)
+		config.EccPublicKey, err = loadECCPublicKey(config.PublicKeyPath)
 		logAndErrors.IfErrorThenFatal(err, "")
 		return config, nil
 	} else if config.KeyType == "rsa" {
 		config.RsaPrivateKey, err = loadRSAPrivateKey(config.PrivateKeyPath)
 		logAndErrors.IfErrorThenFatal(err, "")
-		config.RsaPublicKey, err = loadRSAPublicKey(config.PrivateKeyPath)
+		config.RsaPublicKey, err = loadRSAPublicKey(config.PublicKeyPath)
 		logAndErrors.IfErrorThenFatal(err, "")
 		return config, nil
 	}

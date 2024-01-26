@@ -6,7 +6,6 @@ import (
 	"crypto/ecdsa"
 	"crypto/x509"
 	"encoding/pem"
-	"fmt"
 )
 
 func loadECCPrivateKey(privateKeyFile string) (*ecdsa.PrivateKey, error) {
@@ -14,18 +13,17 @@ func loadECCPrivateKey(privateKeyFile string) (*ecdsa.PrivateKey, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	block, _ := pem.Decode(keyBytes)
-	if block == nil {
-		return nil, logAndErrors.Wrapper(err, "failed to parse PEM block containing the private key")
+	blockPriv, _ := pem.Decode(keyBytes)
+	if blockPriv == nil {
+		return nil, logAndErrors.Wrapper(err, "failed to parse PEM block containing the public key")
 	}
 
-	privateKey, err := x509.ParsePKCS8PrivateKey(block.Bytes)
+	a, _ := x509.ParsePKCS8PrivateKey(blockPriv.Bytes)
 	if err != nil {
 		return nil, err
 	}
 
-	return privateKey.(*ecdsa.PrivateKey), nil
+	return a.(*ecdsa.PrivateKey), nil
 }
 
 func loadECCPublicKey(publicKeyFile string) (*ecdsa.PublicKey, error) {
@@ -41,13 +39,8 @@ func loadECCPublicKey(publicKeyFile string) (*ecdsa.PublicKey, error) {
 
 	pub, err := x509.ParsePKIXPublicKey(block.Bytes)
 	if err != nil {
-		return nil, err
+		return nil, logAndErrors.Wrapper(err, "")
 	}
 
-	publicKey, ok := pub.(*ecdsa.PublicKey)
-	if !ok {
-		return nil, fmt.Errorf("failed to parse public key")
-	}
-
-	return publicKey, nil
+	return pub.(*ecdsa.PublicKey), nil
 }
