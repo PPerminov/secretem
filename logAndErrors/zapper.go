@@ -1,26 +1,53 @@
 package logAndErrors
 
 import (
-	log "github.com/sirupsen/logrus"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
-var logger *log.Logger
+var logger *zap.Logger
+var sugar *zap.SugaredLogger
 
+func Sync() {
+	logger.Sync()
+}
 func Init() {
-	logger = log.New()
+	cfg := zap.Config{
+		//Encoding: "json", // Set the encoding to JSON
+		Encoding:         "console", // Set the encoding to JSON
+		Level:            zap.NewAtomicLevelAt(zap.DebugLevel),
+		OutputPaths:      []string{"stdout"}, // Output to stdout
+		ErrorOutputPaths: []string{"stderr"},
+		EncoderConfig: zapcore.EncoderConfig{
+			// Configure the encoder as needed
+			MessageKey:    "message",
+			LevelKey:      "level",
+			EncodeLevel:   zapcore.LowercaseLevelEncoder,
+			TimeKey:       "time",
+			EncodeTime:    zapcore.ISO8601TimeEncoder,
+			CallerKey:     "caller",
+			EncodeCaller:  zapcore.ShortCallerEncoder,
+			StacktraceKey: "trace",
+		},
+	}
+
+	// Create a logger instance
+	logger, _ = cfg.Build()
+	//logger, _ = zap.NewProduction()
+	//logger.
+	sugar = logger.Sugar()
 
 }
 
 func Info(msg string) {
-	logger.Info(msg)
+	sugar.Infow(msg)
 }
 func Warn(msg string) {
-	logger.Warn(msg)
+	sugar.Warn(msg)
 }
 func Error(msg string) {
-	logger.Error(msg)
+	sugar.Error(msg)
 }
 func Fatal(msg string) {
-	logger.Fatal(msg)
-	//logger.Fatal(logger.Trace())
+	sugar.Fatal(msg)
 }
